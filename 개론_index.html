@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>조경학개론 기여도 평가</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      font-size: 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background-color: #f8f8f8;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      font-size: 38px;
+    }
+
+    select, input {
+      margin: 16px 0;
+      font-size: 26px;
+      padding: 18px 24px;
+      width: 90%;
+      max-width: 420px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+    }
+
+    .member-score {
+      margin-bottom: 22px;
+    }
+
+    button {
+      font-size: 28px;
+      padding: 20px 40px;
+      margin-top: 30px;
+      cursor: pointer;
+      border-radius: 12px;
+      background-color: #5271ff;
+      color: white;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      background-color: #4059d0;
+    }
+  </style>
+</head>
+<body>
+  <h2>조경학개론 기여도 평가</h2>
+
+  <label for="teamSelect">조: </label>
+  <select id="teamSelect" onchange="loadMembers()">
+    <option value="">-- 조 선택 --</option>
+  </select>
+
+  <label for="myName">이름: </label>
+  <select id="myName" onchange="loadTeammates()" disabled>
+    <option value="">-- 이름 선택 --</option>
+  </select>
+
+  <div id="scoreInputs"></div>
+  <button onclick="submitScores()">제출</button>
+
+  <script>
+    const teams = {
+      "1조": ["박지율", "최서영", "최민서", "구하늘", "손예린", "음수민"],
+      "2조": ["정현재", "김도현", "윤부영", "조현성", "이제현", "표오령"],
+      "3조": ["박민영", "전찬우", "오병일", "김도헌", "조성후", "권태형"],
+      "4조": ["정우연", "김예진", "최환희", "남현지", "박소린", "이지현"],
+      "5조": ["이태연", "김예은", "이다인", "임재희", "민수연", "이예안"],
+      "6조": ["박소진", "최지안", "조연수", "한송희", "양효원", "이혜빈"],
+      "7조": ["우승희", "김강민", "박성순", "김태윤", "서현우", "정한별"],
+      "8조": ["서정민", "정회준", "박서진", "권용태", "바트톨"]
+    };
+
+    window.onload = function () {
+      const teamSelect = document.getElementById('teamSelect');
+      Object.keys(teams).forEach(teamName => {
+        const option = document.createElement('option');
+        option.value = teamName;
+        option.textContent = teamName;
+        teamSelect.appendChild(option);
+      });
+    };
+
+    function loadMembers() {
+      const teamSelect = document.getElementById("teamSelect");
+      const myNameSelect = document.getElementById("myName");
+      const selectedTeam = teamSelect.value;
+
+      myNameSelect.innerHTML = '<option value="">-- 이름 선택 --</option>';
+      document.getElementById("scoreInputs").innerHTML = "";
+
+      if (selectedTeam && teams[selectedTeam]) {
+        teams[selectedTeam].forEach(name => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          myNameSelect.appendChild(option);
+        });
+        myNameSelect.disabled = false;
+      } else {
+        myNameSelect.disabled = true;
+      }
+    }
+
+    function loadTeammates() {
+      const myName = document.getElementById("myName").value;
+      const team = document.getElementById("teamSelect").value;
+      const container = document.getElementById("scoreInputs");
+
+      container.innerHTML = "";
+
+      if (!myName) return;
+
+      const teammates = teams[team].filter(name => name !== myName);
+
+      teammates.forEach(member => {
+        const div = document.createElement("div");
+        div.className = "member-score";
+        div.innerHTML = `
+          <label>${member}: </label>
+          <input type="number" name="${member}" min="0" max="100" required>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function submitScores() {
+      const team = document.getElementById('teamSelect').value;
+      const myName = document.getElementById('myName').value;
+      if (!team) {
+        alert('조를 선택해 주세요');
+        return;
+      }
+      if (!myName) {
+        alert('이름을 선택해 주세요');
+        return;
+      }
+
+      const inputs = document.querySelectorAll('#scoreInputs input');
+      let scores = {};
+      for (let input of inputs) {
+        if (!input.value) {
+          alert('모든 조원 기여도 점수를 입력해 주세요');
+          return;
+        }
+        scores[input.name] = Number(input.value);
+      }
+
+      fetch('https://script.google.com/macros/s/AKfycby-Qw93pb0PbP39P7RbF01ZZ13EWdGGrRRjB2QeHDO8Adj148d5zDCKopLMOwdZX19sVA/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ team: team, name: myName, scores: scores })
+      })
+      .then(res => res.text())
+      .then(text => alert('✅ 제출 완료: ' + text))
+      .catch(err => alert('❌ 전송 오류: ' + err));
+    }
+  </script>
+</body>
+</html>
