@@ -166,7 +166,7 @@
         scores[input.name] = Number(input.value);
       }
 
-      fetch('https://script.google.com/macros/s/AKfycby-Qw93pb0PbP39P7RbF01ZZ13EWdGGrRRjB2QeHDO8Adj148d5zDCKopLMOwdZX19sVA/exec', {
+      fetch('https://script.google.com/macros/s/AKfycbzRFfy5sQ9LuV4wPFG88lLlRAn2gceBixYNKC7z8CvYeKlwkqdo4BT3IfQyaV08AeOQiQ/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ team: team, name: myName, scores: scores })
