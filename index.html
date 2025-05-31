@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <title>조경학개론 조원 기여도 평가</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 0;
@@ -72,10 +74,10 @@
   <div id="scoreInputs"></div>
 
   <p style="color: #cc0000; font-size: 20px; margin-top: 10px;">
-    제출까지 시간이 소요됩니다. '제출 완료'가 뜰 때까지 창을 닫지 마세요.
+  제출까지 시간이 소요됩니다. '제출 완료'가 뜰 때까지 창을 닫지 마세요.
   </p>
 
-  <button id="submitBtn" onclick="submitScores()">제출</button>
+  <button onclick="submitScores()">제출</button>
 
   <script>
     const teams = {
@@ -134,10 +136,10 @@
       teammates.forEach(member => {
         const div = document.createElement("div");
         div.className = "member-score";
-        div.innerHTML = `
+        div.innerHTML = 
           <label>${member}: </label>
           <input type="number" name="${member}" min="0" max="100" required>
-        `;
+        ;
         container.appendChild(div);
       });
     }
@@ -145,8 +147,6 @@
     function submitScores() {
       const team = document.getElementById('teamSelect').value;
       const myName = document.getElementById('myName').value;
-      const submitBtn = document.getElementById('submitBtn');
-
       if (!team) {
         alert('조를 선택해 주세요');
         return;
@@ -166,25 +166,13 @@
         scores[input.name] = Number(input.value);
       }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "제출 중...";
-
       fetch('https://script.google.com/macros/s/AKfycby-Qw93pb0PbP39P7RbF01ZZ13EWdGGrRRjB2QeHDO8Adj148d5zDCKopLMOwdZX19sVA/exec', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ team: team, name: myName, scores: scores })
       })
       .then(res => res.text())
-      .then(text => {
-        alert('✅ 제출 완료: ' + text);
-        submitBtn.disabled = false;
-        submitBtn.textContent = "제출";
-      })
-      .catch(err => {
-        alert('❌ 전송 오류: ' + err);
-        submitBtn.disabled = false;
-        submitBtn.textContent = "제출";
-      });
+      .then(text => alert('✅ 제출 완료: ' + text))
+      .catch(err => alert('❌ 전송 오류: ' + err));
     }
   </script>
 </body>
