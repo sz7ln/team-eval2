@@ -143,7 +143,8 @@
         div.className = "member-score";
         div.innerHTML = `
           <label>${member}: </label>
-          <input type="number" name="${member}" min="0" max="100" required>
+          <input type="number" name="${member}" min="0" max="100" required
+                 oninput="if(this.value>100)this.value=100;">
         `;
         container.appendChild(div);
       });
