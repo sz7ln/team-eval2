@@ -51,9 +51,14 @@
       color: white;
       border: none;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
     }
-    button:hover {
+    button:hover:enabled {
       background-color: #4059d0;
+    }
+    button:disabled {
+      cursor: not-allowed;
+      background-color: #9999cc;
     }
   </style>
 </head>
@@ -145,6 +150,9 @@
     }
 
     function submitScores() {
+      const btn = document.querySelector('button');
+      if (btn.disabled) return;
+
       const team = document.getElementById('teamSelect').value;
       const myName = document.getElementById('myName').value;
       if (!team) {
@@ -166,16 +174,27 @@
         scores[input.name] = Number(input.value);
       }
 
+      btn.disabled = true;
+      btn.textContent = '제출 중...';
+
       fetch('https://script.google.com/macros/s/AKfycbxMF0w82UD_sriJhl2kiOew_BDcYSnURFMbTlfHwgnKHt0usVZ5-wfL-YG3MNsBxYU9Gg/exec', {
         method: 'POST',
-        mode: 'no-cors',  // ★ CORS 문제 해결을 위한 필수 설정
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ team: team, name: myName, scores: scores })
       })
-      .then(() => alert('✅ 제출 완료'))
-      .catch(err => alert('❌ 전송 오류: ' + err));
+      .then(() => {
+        alert('✅ 제출 완료');
+        btn.disabled = false;
+        btn.textContent = '제출';
+      })
+      .catch(err => {
+        alert('❌ 전송 오류: ' + err);
+        btn.disabled = false;
+        btn.textContent = '제출';
+      });
     }
   </script>
 </body>
