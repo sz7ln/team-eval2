@@ -168,11 +168,13 @@
 
       fetch('https://script.google.com/macros/s/AKfycbxMF0w82UD_sriJhl2kiOew_BDcYSnURFMbTlfHwgnKHt0usVZ5-wfL-YG3MNsBxYU9Gg/exec', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        mode: 'no-cors',  // 이거 반드시 추가
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ team: team, name: myName, scores: scores })
       })
-      .then(res => res.text())
-      .then(text => alert('✅ 제출 완료: ' + text))
+      .then(() => alert('✅ 제출 완료'))
       .catch(err => alert('❌ 전송 오류: ' + err));
     }
   </script>
