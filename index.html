@@ -168,7 +168,7 @@
 
       fetch('https://script.google.com/macros/s/AKfycbxMF0w82UD_sriJhl2kiOew_BDcYSnURFMbTlfHwgnKHt0usVZ5-wfL-YG3MNsBxYU9Gg/exec', {
         method: 'POST',
-        mode: 'no-cors',  // 이거 반드시 추가
+        mode: 'no-cors',  // ★ CORS 문제 해결을 위한 필수 설정
         headers: {
           'Content-Type': 'application/json'
         },
